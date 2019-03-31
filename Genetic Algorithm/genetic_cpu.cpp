@@ -68,34 +68,7 @@ void crossover(Town** parents, Town* child, int cities, int crossover)
 
 void execute(float prob_mutation, float prob_crossover, int population ,int max_gen, Grid* grid, int seed)
 {
-	mt19937::result_type rseed = seed;
-	auto rgen = bind(uniform_real_distribution<>(0, 1), mt19937(rseed));
-
-	int grid_size = pop_size * sizeof(Grid);
-	Grid* old_pop = new Grid[grid_size];
-	Grid* new_pop = new Grid[grid_size];
-	int sizeofchromosome = grid->cities * sizeof(Town);
-
-	// The best individuals
-	int best_generation      = 0;
-	Grid* best_leader       = new Grid[sizeof(Grid)];
-	Grid* generation_leader = new Grid[sizeof(Grid)];
-	init_grid(best_leader, grid->width, grid->height, grid->num_cities);
-	init_grid(generation_leader, grid->width, grid->height, grid->num_cities);
 	
-	// Initialize the population
-	initialize(grid, old_pop, pop_size, seed);
-	for (int i=0; i<pop_size; i++)
-		init_grid(&new_pop[i], grid->width, grid->height,grid->num_cities);
-	
-	// Calculate the fitnesses
-	float fit_sum = (float)0.0;
-	for (int i=0; i<pop_size; i++)
-	{
-		old_pop[i].calc_fitness();
-		fit_sum        += old_pop[i].fitness;
-		old_pop[i].fit_prob = fit_sum;
-	}
 	// Compute the full probabilities
 	for (int i=0; i<pop_size; i++)
 		old_pop[i].fit_prob /= fit_sum;
@@ -148,27 +121,7 @@ void execute(float prob_mutation, float prob_crossover, int population ,int max_
 			}
 
 		}
-		float fit_sum = (float)0.0;
-		for (int i=0; i<pop_size; i++)
-		{
-			new_pop[i].calc_fitness();
-			fit_sum        += new_pop[i].fitness;
-			new_pop[i].fit_prob = fit_sum;
-		}
-		// Compute the full probabilities
-		for (int i=0; i<pop_size; i++)
-			new_pop[i].fit_prob /= fit_sum;
-
-		// Swap the populations
-		Grid* temp = old_pop;
-		old_pop     = new_pop;
-		new_pop     = temp;
-
-		// Select the new leaders
-		if (select_leader(old_pop, pop_size, generation_leader, best_leader))
-			best_generation = i + 1;
-		print_status(generation_leader, best_leader, i + 1);
-		count++:
+		
 	}
 	
 	
